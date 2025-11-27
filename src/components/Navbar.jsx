@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useCart } from '../context/CartContext.jsx'; // Add .jsx extension
 import './Navbar.css';
 
 // Import custom icons
@@ -10,6 +10,8 @@ import iconTransaksi from '../assets/transaction.png';
 import iconAkun from '../assets/profile.png';
 
 function Navbar() {
+  const { totalItems } = useCart(); // Get totalItems from cart context
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -27,6 +29,8 @@ function Navbar() {
             <NavLink to="/keranjang" className={({ isActive }) => (isActive ? "nav-links active" : "nav-links")}>
               <img src={iconKeranjang} alt="Keranjang" className="nav-icon" />
               <span>Keranjang</span>
+              {/* Display badge only if there are items in the cart */}
+              {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </NavLink>
           </li>
           <li className="nav-item">

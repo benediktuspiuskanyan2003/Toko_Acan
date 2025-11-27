@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Beranda.css';
 import fotoTokoAcan from '../assets/fototokoacan.jpg';
-import ProductList from '../components/ProductList';
-import { allProducts } from '../data/products';
+import ProductList from '../components/ProductList.jsx';
+// Import the centralized dummy data
+import { dummyProducts } from '../data/dummyProducts.js';
 
 function Beranda() {
+  // Use the imported dummy data array
+  const allProducts = dummyProducts; 
+
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -47,7 +51,7 @@ function Beranda() {
         onCategoryChange={handleCategoryChange}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        allProductsForCategories={allProducts} // Pass the complete list for category generation
+        allProductsForCategories={allProducts}
       />
     </div>
   );

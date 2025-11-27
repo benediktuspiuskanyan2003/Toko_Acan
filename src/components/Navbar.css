@@ -49,6 +49,7 @@
   text-decoration: none;
   height: 100%;
   width: 100%;
+  position: relative; /* Add position relative for badge positioning */
 }
 
 .nav-links span {
@@ -60,6 +61,26 @@
   width: 24px;
   margin-bottom: 4px;
   filter: invert(1); /* Invert color to make it white */
+}
+
+/* --- Cart Badge --- */
+.cart-badge {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(8px);
+  background-color: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border: 1px solid #333;
 }
 
 .nav-links:hover {
@@ -74,9 +95,7 @@
   border-top: 3px solid #1888ff;
 }
 
-/* Change icon color for the active link */
 .nav-links.active .nav-icon {
-    /* This sequence of filters turns a black icon into the blue color #1888ff */
     filter: invert(50%) sepia(100%) saturate(2000%) hue-rotate(180deg);
 }
 
@@ -110,7 +129,7 @@
     display: grid;
     grid-template-columns: repeat(4, auto);
     grid-gap: 10px;
-    width: 60vw;
+    width: auto;
     justify-content: end;
     margin-right: 2rem;
   }
@@ -119,7 +138,6 @@
     height: 80px;
   }
   
-  /* Hide icons on desktop */
   .nav-icon {
     display: none;
   }
@@ -130,7 +148,14 @@
   }
   
   .nav-links span {
-    font-size: 1.2rem; /* Restore original font size */
+    font-size: 1.2rem;
+  }
+
+  /* Badge position for desktop */
+  .cart-badge {
+    position: static; /* Reset absolute positioning */
+    transform: none;
+    margin-left: 8px; /* Add space between text and badge */
   }
 
   .nav-links:hover {
@@ -145,8 +170,7 @@
     border-bottom: 4px solid #1888ff;
   }
   
-  /* Make sure the active icon is also not displayed on desktop */
   .nav-links.active .nav-icon {
-    filter: none; /* Reset filter */
+    filter: none; 
   }
 }

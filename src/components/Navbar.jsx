@@ -3,6 +3,12 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 
+// Import custom icons
+import iconBeranda from '../assets/beranda.png';
+import iconKeranjang from '../assets/basket.png';
+import iconTransaksi from '../assets/transaction.png';
+import iconAkun from '../assets/profile.png';
+
 function Navbar() {
   return (
     <nav className="navbar">
@@ -13,22 +19,26 @@ function Navbar() {
         <ul className="nav-menu">
           <li className="nav-item">
             <NavLink to="/" className={({ isActive }) => (isActive ? "nav-links active" : "nav-links")}>
-              Beranda
+              <img src={iconBeranda} alt="Beranda" className="nav-icon" />
+              <span>Beranda</span>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to="/keranjang" className={({ isActive }) => (isActive ? "nav-links active" : "nav-links")}>
-              Keranjang
+              <img src={iconKeranjang} alt="Keranjang" className="nav-icon" />
+              <span>Keranjang</span>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to="/transaksi" className={({ isActive }) => (isActive ? "nav-links active" : "nav-links")}>
-              Transaksi
+              <img src={iconTransaksi} alt="Transaksi" className="nav-icon" />
+              <span>Transaksi</span>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to="/akun" className={({ isActive }) => (isActive ? "nav-links active" : "nav-links")}>
-              Akun
+              <img src={iconAkun} alt="Akun" className="nav-icon" />
+              <span>Akun</span>
             </NavLink>
           </li>
         </ul>

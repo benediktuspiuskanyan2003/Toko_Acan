@@ -8,4 +8,13 @@
 
 body {
   background: #f1f1f1;
+  /* Add padding to the bottom to avoid overlap with the fixed navbar on mobile */
+  padding-bottom: 60px; /* This should match the navbar height */
+}
+
+/* Remove the padding on larger screens where the navbar is at the top */
+@media screen and (min-width: 960px) {
+  body {
+    padding-bottom: 0;
+  }
 }

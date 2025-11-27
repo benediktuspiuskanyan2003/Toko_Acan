@@ -48,12 +48,11 @@ function Transaksi() {
   // --- Logika Filtering ---
   const filteredOrders = useMemo(() => {
     if (!filterDate) {
-      return orders; // Tampilkan semua jika filter kosong
+      return orders; 
     }
 
-    // Ubah format date di data order ('DD Bulan YYYY') menjadi 'YYYY-MM-DD'
+    
     const normalizeDate = (dateString) => {
-        // Logika konversi sederhana dari 'DD Bulan YYYY' ke 'YYYY-MM-DD'
         const parts = dateString.split(' ');
         if (parts.length !== 3) return ''; 
 
@@ -71,12 +70,10 @@ function Transaksi() {
 
     return orders.filter(order => {
       const orderNormalizedDate = normalizeDate(order.date);
-      // Membandingkan tanggal dari data pesanan yang sudah dinormalisasi dengan tanggal filter
       return orderNormalizedDate === filterDate;
     });
   }, [orders, filterDate]);
 
-  // --- Fungsi Modal & Format Rupiah (Tetap Sama) ---
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
     setIsModalOpen(true);
@@ -95,14 +92,14 @@ function Transaksi() {
     }).format(number);
   };
   
-  // --- Tampilan Render ---
   return (
     <div className='transaction-container'> 
-      <h1>Riwayat Pesanan Saya</h1>
+      <h1>Transaksi        
+      </h1>
 
       <div className='transaction-section'>
         <div className='transaction-header-controls'>
-            <h3>Daftar Transaksi</h3>
+            
             
             {/* Input Filter Tanggal Baru */}
             <div className='filter-controls'>

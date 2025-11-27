@@ -2,6 +2,7 @@ import React from 'react';
 
 // Hapus impor CSS di sini
 
+
 function ModalDetailTransaksi({ order, onClose, formatRupiah }) {
   // Logic perhitungan (tetap sama)
   const totalItemsPrice = order.items.reduce((acc, item) => acc + (item.price * item.qty), 0);

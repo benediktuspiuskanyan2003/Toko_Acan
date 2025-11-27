@@ -1,5 +1,3 @@
-/* --- Gaya Umum Kontainer Transaksi --- */
-
 .transaction-container {
     max-width: 900px;
     margin: 40px auto;
@@ -28,14 +26,13 @@
     color: #444;
 }
 
-/* --- Gaya Kartu Ringkasan Transaksi --- */
+
 
 .order-card-summary {
-    border: 1px solid #e0e0e0;
+    border-bottom: #aaa solid 2px;
     padding: 15px 20px;
-    border-radius: 8px;
     margin-bottom: 15px;
-    cursor: pointer; /* Menandakan elemen bisa diklik */
+    cursor: pointer; 
     transition: background-color 0.2s, box-shadow 0.2s;
     display: flex;
     justify-content: space-between;
@@ -83,11 +80,10 @@
 .summary-total {
     font-size: 18px;
     font-weight: bold;
-    color: #007bff; /* Warna yang menonjol */
+    color: #007bff;
     display: block;
 }
 
-/* --- Gaya Modal (Pop-up) --- */
 
 .modal-backdrop {
     position: fixed;
@@ -151,7 +147,7 @@
 .modal-status-badge {
     font-weight: bold;
 }
-/* Warna Status di Modal (untuk badge) */
+
 .modal-status-badge.status-dikirim { color: #007bff; }
 .modal-status-badge.status-menunggu { color: #ffc107; }
 .modal-status-badge.status-selesai { color: #28a745; }
@@ -186,7 +182,7 @@
     margin-left: 15px;
 }
 
-/* Ringkasan Biaya di Modal */
+
 .modal-summary {
     margin-top: 20px;
     padding-top: 15px;
@@ -206,14 +202,13 @@
     padding-top: 10px;
 }
 
-/* --- Tambahan Gaya Filter di Transaksi.css --- */
 
 .transaction-header-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #eee;
-    padding-bottom: 15px; /* Sedikit lebih besar dari sebelumnya */
+    padding-bottom: 15px;
     margin-bottom: 20px;
 }
 

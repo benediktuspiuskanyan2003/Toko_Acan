@@ -14,8 +14,6 @@
 .akun-layout {
     gap: 30px;
 }
-
-
 .akun-content {
     
 }
@@ -67,25 +65,27 @@
 
 .profile-info {
     margin-bottom: 20px;
+    
 }
 
 .info-row {
     display: flex;
     padding: 10px 0;
     border-bottom: 1px dashed #ddd;
+    
 }
 
 .info-label {
     font-weight: bold;
-    flex: 0 0 120px; 
+    flex: 0 0 90px; 
     color: #666;
+    
 }
 
 .info-value {
     flex-grow: 1;
 }
 
-/* Tombol (tetap sama) */
 .btn-edit {
     background-color: #28a745;
     color: white;

@@ -7,7 +7,8 @@ function Akun() {
     photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUuR6lY1HPFS4Q_R2A5r70ECdchXmR_n1b8g&s', 
     nama: 'Tok Dalang',
     hp: '0812345xxx',
-    email: 'tokdalang001@gmail.com.com',
+    email: 'tokdalang001@gmail.com',
+    password: 'mamamintamakan'
   });
 
   const [addresses] = useState([

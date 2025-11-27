@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 function Akun() {
   return (
-    <div>
-      <h1>Akun</h1>
-      <p>Informasi akun Anda ada di sini.</p>
+    <div style={{ padding: '20px' }}>
+      <h1>Halaman Akun Pengguna</h1>
+      <p>Fitur ini sedang dalam pengembangan.</p>
     </div>
   );
 }

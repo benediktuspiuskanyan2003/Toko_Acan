@@ -1,16 +1,35 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Beranda.css';
-import fotoTokoAcan from '../assets/fototokoacan.jpg'; // Import your image
-import ProductList from '../components/ProductList'; // Import the ProductList component
+import fotoTokoAcan from '../assets/fototokoacan.jpg';
+import ProductList from '../components/ProductList';
+import { allProducts } from '../data/products';
 
 function Beranda() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredProducts = allProducts
+    .filter(product => 
+      selectedCategory === 'All' || product.category === selectedCategory
+    )
+    .filter(product => 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
   return (
     <div className="home-page">
       <div 
         className="hero-section" 
-        style={{ backgroundImage: `url(${fotoTokoAcan})` }} // Set background image dynamically
+        style={{ backgroundImage: `url(${fotoTokoAcan})` }}
       >
         <div className="hero-overlay"></div>
         <div className="hero-content">
@@ -22,7 +41,14 @@ function Beranda() {
         </div>
       </div>
       
-      <ProductList /> {/* Add the ProductList component here */}
+      <ProductList 
+        products={filteredProducts} 
+        selectedCategory={selectedCategory} 
+        onCategoryChange={handleCategoryChange}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        allProductsForCategories={allProducts} // Pass the complete list for category generation
+      />
     </div>
   );
 }

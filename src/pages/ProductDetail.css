@@ -1,0 +1,127 @@
+/* Product Detail Page Styling */
+.product-detail-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f5f7;
+  padding: 40px 20px;
+}
+
+.product-detail-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.product-detail-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.product-detail-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.product-detail-info {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-detail-name {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
+}
+
+.product-detail-category {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  align-self: flex-start; /* Make the background only as wide as the text */
+}
+
+.product-detail-price {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1888ff;
+  margin-bottom: 25px;
+}
+
+.product-detail-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  flex-grow: 1;
+  margin-bottom: 30px;
+}
+
+.add-to-cart-btn {
+  background: linear-gradient(45deg, #1888ff, #0056b3);
+  color: #fff;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(24, 136, 255, 0.4);
+  margin-bottom: 20px;
+}
+
+.add-to-cart-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(24, 136, 255, 0.6);
+}
+
+.back-link {
+  color: #555;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #1888ff;
+}
+
+/* Styling for product not found page */
+.product-not-found {
+  text-align: center;
+  padding: 50px;
+}
+
+/* --- Media Query for Mobile Devices --- */
+@media screen and (max-width: 768px) {
+  .product-detail-container {
+    flex-direction: column;
+  }
+
+  .product-detail-name {
+    font-size: 2rem;
+  }
+
+  .product-detail-price {
+    font-size: 1.5rem;
+  }
+}

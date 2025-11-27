@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 function Transaksi() {
   return (
-    <div>
-      <h1>Transaksi</h1>
-      <p>Riwayat transaksi Anda akan ditampilkan di sini.</p>
+    <div style={{ padding: '20px' }}>
+      <h1>Halaman Riwayat Transaksi</h1>
+      <p>Fitur ini sedang dalam pengembangan.</p>
     </div>
   );
 }

@@ -11,7 +11,7 @@
   background-size: cover;
   background-position: center;
   padding: 0 20px;
-  border-radius: 25px 25px 25px 25px; /* Curves the bottom-left and bottom-right corners */
+  /*border-radius: 25px 25px 25px 25px;  Curves the bottom-left and bottom-right corners */
   overflow: hidden; /* Ensures the content inside respects the rounded corners */
 }
 

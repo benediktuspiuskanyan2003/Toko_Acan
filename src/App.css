@@ -1,4 +1,8 @@
-
+/* 
+This ensures that the main content of the app has enough space at the bottom 
+so it isn't hidden behind the fixed-position Navbar.
+The height (e.g., 80px) should roughly match the height of your Navbar.
+*/
 .main-content {
-  padding: 20px;
+  padding-bottom: 80px; 
 }

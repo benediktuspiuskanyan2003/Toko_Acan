@@ -1,6 +1,6 @@
-/* Styling untuk Kontainer Utama */
+
 .akun-container {
-    max-width: 900px; /* Lebar maksimum yang disesuaikan */
+    max-width: 900px; 
     margin: 40px auto;
     padding: 20px;
     font-family: Arial, sans-serif;
@@ -35,22 +35,18 @@
     color: #444;
 }
 
-/* Foto Profil */
-/* Dalam file Akun.css */
-
-/* Bagian yang Diubah */
 .profile-photo-container {
-    /* Hapus display: flex; dan ganti dengan tata letak pemusatan */
-    display: flex; /* Pertahankan flex untuk susunan vertikal */
-    flex-direction: column; /* Mengubah susunan menjadi kolom (vertikal) */
-    align-items: center; /* Memusatkan item secara horisontal (pusat) */
-    gap: 15px; /* Kurangi jarak antar foto dan tombol */
+
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 15px;
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #eee;
 }
 
-/* Bagian Tombol (Penyesuaian kecil) */
+
 .btn-ubah-foto {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
@@ -114,7 +110,7 @@
     cursor: pointer;
 }
 
-/* Security Menu */
+
 .security-section ul {
     list-style: none;
     padding: 0;
@@ -141,7 +137,7 @@
     text-decoration: underline;
 }
 
-/* Styling untuk Bagian Alamat */
+
 .address-section {
     background-color: white;
     padding: 25px;
@@ -181,7 +177,7 @@
 }
 
 .address-card.default-address {
-    border: 2px solid #28a745; /* Border hijau untuk alamat utama */
+    border: 2px solid #28a745; 
     background-color: #f6fff8;
 }
 
@@ -245,7 +241,7 @@
 
 }
 .btn-logout {
-    background-color: #dc3545; /* Merah */
+    background-color: #dc3545;
     color: white;
     padding: 12px 25px;
     border: none;

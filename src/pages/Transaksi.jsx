@@ -1,10 +1,151 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+import ModalDetailTransaksi from '../components/ModalDetailTransaksi';
+import './Transaksi.css';
 
 function Transaksi() {
+  // --- Data Pesanan ---
+  const [orders] = useState([
+    {
+      id: 'INV/20240726/A001',
+      date: '26 Juli 2024',
+      status: 'Dikirim',
+      total: 350000,
+      items: [
+        { name: 'Beras Pulen 5kg', qty: 1, price: 60000 },
+        { name: 'Minyak Goreng 2L', qty: 2, price: 30000 },
+        { name: 'Telur Ayam 1 Tray', qty: 1, price: 55000 },
+      ],
+    },
+    {
+      id: 'INV/20240725/B005',
+      date: '25 Juli 2024',
+      status: 'Menunggu Pembayaran',
+      total: 125000,
+      items: [{ name: 'Susu UHT Full Cream 1L', qty: 5, price: 25000 }],
+    },
+    {
+      id: 'INV/20240720/C010',
+      date: '20 Juli 2024',
+      status: 'Selesai',
+      total: 55000,
+      items: [{ name: 'Mie Instan Rasa Soto', qty: 20, price: 2750 }],
+    },
+    {
+        id: 'INV/20240726/D002', // Tambahkan pesanan dengan tanggal yang sama untuk pengujian filter
+        date: '26 Juli 2024',
+        status: 'Selesai',
+        total: 75000,
+        items: [{ name: 'Kopi Bubuk', qty: 1, price: 75000 }],
+    },
+  ]);
+
+  // --- State Filter ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  // State baru untuk menyimpan tanggal filter (dalam format YYYY-MM-DD)
+  const [filterDate, setFilterDate] = useState(''); 
+
+  // --- Logika Filtering ---
+  const filteredOrders = useMemo(() => {
+    if (!filterDate) {
+      return orders; // Tampilkan semua jika filter kosong
+    }
+
+    // Ubah format date di data order ('DD Bulan YYYY') menjadi 'YYYY-MM-DD'
+    const normalizeDate = (dateString) => {
+        // Logika konversi sederhana dari 'DD Bulan YYYY' ke 'YYYY-MM-DD'
+        const parts = dateString.split(' ');
+        if (parts.length !== 3) return ''; 
+
+        const monthMap = {
+            'Januari': '01', 'Februari': '02', 'Maret': '03', 'April': '04',
+            'Mei': '05', 'Juni': '06', 'Juli': '07', 'Agustus': '08',
+            'September': '09', 'Oktober': '10', 'November': '11', 'Desember': '12',
+        };
+        const month = monthMap[parts[1]];
+        const day = parts[0].padStart(2, '0');
+        const year = parts[2];
+        
+        return `${year}-${month}-${day}`;
+    };
+
+    return orders.filter(order => {
+      const orderNormalizedDate = normalizeDate(order.date);
+      // Membandingkan tanggal dari data pesanan yang sudah dinormalisasi dengan tanggal filter
+      return orderNormalizedDate === filterDate;
+    });
+  }, [orders, filterDate]);
+
+  // --- Fungsi Modal & Format Rupiah (Tetap Sama) ---
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrder(null);
+  };
+
+  const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
+  
+  // --- Tampilan Render ---
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Halaman Riwayat Transaksi</h1>
-      <p>Fitur ini sedang dalam pengembangan.</p>
+    <div className='transaction-container'> 
+      <h1>Riwayat Pesanan Saya</h1>
+
+      <div className='transaction-section'>
+        <div className='transaction-header-controls'>
+            <h3>Daftar Transaksi</h3>
+            
+            {/* Input Filter Tanggal Baru */}
+            <div className='filter-controls'>
+                <label htmlFor='filter-date'>Filter Tanggal:</label>
+                <input 
+                    type="date"
+                    id='filter-date'
+                    className='input-date-filter'
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                />
+            </div>
+        </div>
+
+        {filteredOrders.length > 0 ? (
+            filteredOrders.map((order) => (
+              <div 
+                key={order.id} 
+                className='order-card-summary'
+                onClick={() => handleViewDetails(order)}
+              >
+                <div className='summary-info'>
+                  <span className='summary-date'>{order.date}</span>
+                  <strong className='summary-id'>#{order.id}</strong>
+                </div>
+                <div className='summary-total-container'>
+                    <span className='summary-status'>{order.status}</span>
+                    <strong className='summary-total'>{formatRupiah(order.total)}</strong>
+                </div>
+              </div>
+            ))
+        ) : (
+            <p className='no-data-message'>Tidak ada transaksi pada tanggal tersebut.</p>
+        )}
+      </div>
+
+      {isModalOpen && selectedOrder && (
+        <ModalDetailTransaksi 
+          order={selectedOrder} 
+          onClose={handleCloseModal} 
+          formatRupiah={formatRupiah}
+        />
+      )}
     </div>
   );
 }

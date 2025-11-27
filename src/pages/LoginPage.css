@@ -4,9 +4,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Memastikan form di tengah layar */
+    min-height: 100vh; 
     background-color: #f4f4f4;
     font-family: Arial, sans-serif;
+    
 }
 
 .login-box {

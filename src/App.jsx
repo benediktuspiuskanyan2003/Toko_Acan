@@ -47,11 +47,13 @@ import Transaksi from './pages/Transaksi.jsx';
 import Akun from './pages/Akun.jsx';
 import './App.css';
 import Login from './pages/LoginPage.jsx';
+import Register from './pages/RegisterPage.jsx';
 
 function App() {
   const location = useLocation(); 
 
-  const noNavbarPaths = ['/login'];
+  const noNavbarPaths = ['/login','/register'];
+  
 
   const shouldShowNavbar = !noNavbarPaths.includes(location.pathname);
 
@@ -69,6 +71,7 @@ function App() {
             <Route path="/transaksi" element={<Transaksi />} />
             <Route path="/akun" element={<Akun />} />
             <Route path="/login" element={<Login/>}/>
+            <Route path="/register" element={<Register/>}/>
           </Routes>
         </main>
       </div>

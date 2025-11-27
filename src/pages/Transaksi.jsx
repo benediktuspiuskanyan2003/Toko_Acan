@@ -3,7 +3,6 @@ import ModalDetailTransaksi from '../components/ModalDetailTransaksi';
 import './Transaksi.css';
 
 function Transaksi() {
-  // --- Data Pesanan ---
   const [orders] = useState([
     {
       id: 'INV/20240726/A001',
@@ -31,7 +30,7 @@ function Transaksi() {
       items: [{ name: 'Mie Instan Rasa Soto', qty: 20, price: 2750 }],
     },
     {
-        id: 'INV/20240726/D002', // Tambahkan pesanan dengan tanggal yang sama untuk pengujian filter
+        id: 'INV/20240726/D002', 
         date: '26 Juli 2024',
         status: 'Selesai',
         total: 75000,
@@ -39,13 +38,13 @@ function Transaksi() {
     },
   ]);
 
-  // --- State Filter ---
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  // State baru untuk menyimpan tanggal filter (dalam format YYYY-MM-DD)
+  
   const [filterDate, setFilterDate] = useState(''); 
 
-  // --- Logika Filtering ---
+  
   const filteredOrders = useMemo(() => {
     if (!filterDate) {
       return orders; 

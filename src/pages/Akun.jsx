@@ -80,14 +80,13 @@ function Akun() {
 
           </div>
 
-          {/* BLOK 4: Keamanan */}
+          
           <div className='security-section'>
             <h2>Keamanan & Kata Sandi</h2>
-            {/* ... Konten Keamanan tetap sama ... */}
+
             <p>Kelola pengaturan kata sandi dan keamanan akun Anda.</p>
             <ul>
               <li><button className='btn-link'>Ubah Kata Sandi</button></li>
-              <li><button className='btn-link'>Verifikasi Dua Langkah (2FA)</button></li>
               <li><button className='btn-link'>Lihat Aktivitas Login</button></li>
             </ul>
           </div>

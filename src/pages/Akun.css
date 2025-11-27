@@ -230,8 +230,8 @@
 }
 
 .btn-set-default {
-    border: 1px solid #ffc107;
-    color: #ffc107;
+    border: 1px solid green;
+    color: green
 }
 
 .btn-edit-alamat {

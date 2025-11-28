@@ -110,6 +110,8 @@ function ProductDetail() {
             image: product.image,
             productId: product.id,
             variantName: variant.name,
+            // MODIFIED: Pass minQuantity to the cart context
+            minQuantity: variant.minQuantity,
           },
           quantity: quantity,
         });

@@ -1,61 +1,78 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. Import Navigate
+import api from '../services/api'; // 2. Import API Jembatan
 // import './Akun.css'; 
 import './LoginPage.css'; 
 
 function Register() {
+  const navigate = useNavigate(); // 3. Hook navigasi
+
   // State untuk menyimpan nilai input
   const [namaLengkap, setNamaLengkap] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  // State BARU untuk konfirmasi kata sandi
   const [confirmPassword, setConfirmPassword] = useState(''); 
   
-  // State untuk pesan kesalahan
+  // State tambahan
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // State Loading
 
   // Fungsi helper untuk validasi dasar Nomor HP
   const isValidPhoneNumber = (value) => {
-    // Regex: minimal 8 digit, hanya angka, dan bisa dimulai dengan '+'
     return /^\+?\d{8,}$/.test(value);
   };
 
   // Fungsi yang dipanggil saat form disubmit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // 4. Jadikan Async
     e.preventDefault(); 
     setError('');
 
-    // 1. Validasi Kosong (termasuk confirmPassword)
+    // --- VALIDASI CLIENT (Punya Temanmu) ---
     if (!namaLengkap || !phoneNumber || !password || !confirmPassword) {
       setError('Semua kolom harus diisi.');
       return;
     }
 
-    // 2. Validasi Nomor HP
     if (!isValidPhoneNumber(phoneNumber)) {
         setError('Masukkan Nomor HP yang valid (minimal 8 digit).');
         return;
     }
     
-    // 3. Validasi Panjang Kata Sandi
-    if (password.length < 6) {
+    if (password.length < 6) { // Sesuaikan dengan backend (kalau backend 6, di sini 6)
         setError('Kata sandi minimal harus 6 karakter.');
         return;
     }
     
-    // 4. VALIDASI KATA SANDI SAMA ATAU TIDAK (BARU)
     if (password !== confirmPassword) {
         setError('Konfirmasi Kata Sandi tidak cocok dengan Kata Sandi yang dimasukkan.');
         return;
     }
 
-    // Jika semua validasi lolos
-    
-    console.log('Mencoba mendaftar dengan:', { namaLengkap, phoneNumber, password });
-    
-    // Contoh sukses (Hanya simulasi)
-    alert(`Pendaftaran ${namaLengkap} berhasil! Silakan masuk.`);
-    // Redirect ke halaman Login setelah berhasil
-    // window.location.href = '/login'; 
+    // --- LOGIC BACKEND MULAI ---
+    setLoading(true); // Mulai loading
+
+    try {
+      // 5. Tembak API Register
+      // Perhatikan mapping nama field: 
+      // Kiri (Backend) : Kanan (State Frontend)
+      const response = await api.post('/auth/register', {
+        nama_lengkap: namaLengkap,
+        no_wa: phoneNumber,
+        password: password
+      });
+
+      if (response.data.success) {
+        alert(`Pendaftaran ${namaLengkap} berhasil! Silakan masuk.`);
+        navigate('/login'); // 6. Redirect pakai React Router
+      }
+
+    } catch (err) {
+      console.error(err);
+      // Tampilkan error dari backend (misal: No WA sudah terdaftar)
+      setError(err.response?.data?.message || 'Gagal mendaftar. Coba lagi.');
+    } finally {
+      setLoading(false); // Selesai loading
+    }
   };
 
   return (
@@ -66,11 +83,12 @@ function Register() {
         
         <p>Isi data diri Anda untuk mendaftar.</p>
 
-        {error && <div className='error-message'>{error}</div>}
+        {/* Tampilkan Error */}
+        {error && <div className='error-message' style={{color: 'red', textAlign:'center', marginBottom:'10px'}}>{error}</div>}
 
         <form onSubmit={handleSubmit}>
           
-          {/* Input Nama Lengkap (Tetap) */}
+          {/* Input Nama Lengkap */}
           <div className='form-group'>
             <label htmlFor='nama'>Nama Lengkap</label>
             <input
@@ -81,10 +99,11 @@ function Register() {
               placeholder='Masukkan Nama Lengkap Anda'
               required
               className='form-input'
+              disabled={loading} // Disable saat loading
             />
           </div>
 
-          {/* Input Nomor HP (Tetap) */}
+          {/* Input Nomor HP */}
           <div className='form-group'>
             <label htmlFor='phoneNumber'>Nomor HP</label>
             <input
@@ -95,10 +114,11 @@ function Register() {
               placeholder='Masukkan Nomor HP Anda (contoh: 0812xxxxxx)'
               required
               className='form-input'
+              disabled={loading}
             />
           </div>
 
-          {/* Input Kata Sandi (Tetap) */}
+          {/* Input Kata Sandi */}
           <div className='form-group'>
             <label htmlFor='password'>Buat Kata Sandi</label>
             <input
@@ -109,10 +129,11 @@ function Register() {
               placeholder='Minimal 6 karakter'
               required
               className='form-input'
+              disabled={loading}
             />
           </div>
           
-          {/* Input KONFIRMASI KATA SANDI (BARU) */}
+          {/* Input KONFIRMASI KATA SANDI */}
           <div className='form-group'>
             <label htmlFor='confirmPassword'>Konfirmasi Kata Sandi</label>
             <input
@@ -123,11 +144,12 @@ function Register() {
               placeholder='Ulangi kata sandi'
               required
               className='form-input'
+              disabled={loading}
             />
           </div>
 
-          <button type='submit' className='btn-login'>
-            Daftar Sekarang
+          <button type='submit' className='btn-login' disabled={loading}>
+            {loading ? 'Mendaftar...' : 'Daftar Sekarang'}
           </button>
         </form>
 

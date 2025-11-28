@@ -53,6 +53,9 @@ import Dashboard from './pages/admin/Dashboard';
 import ProductList from './pages/admin/ProductList';
 import ProductAdd from './pages/admin/ProductAdd';
 import ProductEdit from './pages/admin/ProductEdit';
+import OrderList from './pages/admin/OrderList';
+import OrderDetail from './pages/admin/OrderDetail';
+import TestCheckout from './pages/TestCheckout';
 
 
 function App() {
@@ -74,6 +77,7 @@ function App() {
             <Route path="/" element={<Beranda />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/keranjang" element={<Keranjang />} />
+            <Route path="/test-checkout" element={<TestCheckout />} />
             <Route path="/transaksi" element={<Transaksi />} />
             <Route path="/akun" element={<Akun />} />
             <Route path="/login" element={<Login />} />
@@ -84,6 +88,8 @@ function App() {
               <Route path="products" element={<ProductList />} />
               <Route path="products/add" element={<ProductAdd />} />
               <Route path="products/edit/:id" element={<ProductEdit />} />
+              <Route path="orders" element={<OrderList />} />
+              <Route path="orders/:id" element={<OrderDetail />} />
             </Route>
           </Routes>
         </main>

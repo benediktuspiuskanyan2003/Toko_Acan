@@ -1,124 +1,202 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-// Import the centralized dummy data
 import { dummyProducts } from '../data/dummyProducts.js';
 import { useCart } from '../context/CartContext.jsx';
-import './ProductDetail.css'; 
+import NotificationToast from '../components/NotificationToast.jsx';
+import './ProductDetail.css';
+
+const initializeQuantities = (variants) => {
+  const quantities = {};
+  if (variants) {
+    variants.forEach(variant => {
+      quantities[variant.name] = 0;
+    });
+  }
+  return quantities;
+};
 
 function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useCart();
-
-  // --- DATA FETCHING LOGIC ---
-  // Find the correct product from the dummy data array using the ID from the URL.
-  // The ID from useParams is a string, so it needs to be converted to a number.
   const product = dummyProducts.find(p => p.id === Number(id));
 
-  // --- STATE MANAGEMENT ---
-  const [selectedVariant, setSelectedVariant] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantities, setQuantities] = useState({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [savingsTip, setSavingsTip] = useState(null); // NEW: State for savings tip
 
-  // Effect to set the default variant once the product is loaded.
   useEffect(() => {
-    if (product && product.variants && product.variants.length > 0) {
-      setSelectedVariant(product.variants[0]);
+    if (product) {
+      setQuantities(initializeQuantities(product.variants));
     }
   }, [product]);
 
-  // --- HANDLER FUNCTIONS ---
-  const handleVariantChange = (variant) => {
-    setSelectedVariant(variant);
-    setQuantity(1);
-  };
+  // NEW: useEffect to watch for savings opportunities
+  useEffect(() => {
+    if (!product) return;
 
-  const handleIncreaseQuantity = () => {
-    setQuantity(prev => prev + 1);
-  };
+    const eceranVariant = product.variants.find(v => v.name === 'PCS');
+    const grosirVariant = product.variants.find(v => v.name === 'PCS Grosir');
+    const eceranQuantity = quantities[eceranVariant?.name] || 0;
 
-  const handleDecreaseQuantity = () => {
-    setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+    if (eceranVariant && grosirVariant && eceranQuantity >= grosirVariant.minQuantity) {
+      setSavingsTip({
+        target: eceranVariant.name,
+        message: `✨ Tips: Pilih penawaran "${grosirVariant.tierName}" untuk harga lebih hemat (Rp ${grosirVariant.price.toLocaleString('id-ID')}/pcs).`
+      });
+    } else {
+      setSavingsTip(null); // Clear tip if condition is not met
+    }
+  }, [quantities, product]);
+
+
+  const handleQuantityChange = (variantName, amount) => {
+    const variant = product.variants.find(v => v.name === variantName);
+    if (!variant) return;
+
+    setQuantities(prev => {
+      const currentQuantity = prev[variantName] || 0;
+      let newQuantity = currentQuantity + amount;
+
+      if (amount > 0 && currentQuantity === 0 && variant.minQuantity > 1) {
+        newQuantity = variant.minQuantity;
+      } else {
+        newQuantity = Math.max(0, newQuantity);
+      }
+
+      // Special rule: if user decreases from minQuantity, it should go to 0
+      if (amount < 0 && currentQuantity === variant.minQuantity && variant.minQuantity > 1) {
+        newQuantity = 0;
+      }
+
+      return { ...prev, [variantName]: newQuantity };
+    });
   };
   
+  const { total, totalItems } = useMemo(() => {
+    let currentTotal = 0;
+    let currentTotalItems = 0;
+    if (product && product.variants) {
+      product.variants.forEach(variant => {
+        const quantity = quantities[variant.name] || 0;
+        if (quantity > 0) {
+          currentTotal += variant.price * quantity;
+          currentTotalItems += quantity;
+        }
+      });
+    }
+    return { total: currentTotal, totalItems: currentTotalItems };
+  }, [quantities, product]);
+
+
   const handleAddToCart = () => {
-    if (!product || !selectedVariant) return;
+    if (!product || totalItems === 0) return;
 
-    const itemToAdd = {
-      id: `${product.id}-${selectedVariant.name}`,
-      name: `${product.name} (${selectedVariant.name})`,
-      price: selectedVariant.price,
-      image: product.image,
-      productId: product.id,
-      variantName: selectedVariant.name,
-    };
+    let allValid = true;
+    const itemsToAdd = [];
+    product.variants.forEach(variant => {
+      const quantity = quantities[variant.name];
+      if (quantity > 0) {
+        if (quantity < variant.minQuantity) {
+            alert(`Jumlah untuk ${variant.tierName} minimal harus ${variant.minQuantity}. Pesanan Anda saat ini ${quantity}.`);
+            allValid = false;
+            return;
+        }
+        itemsToAdd.push({
+          item: {
+            id: `${product.id}-${variant.name}`,
+            name: `${product.name} (${variant.tierName})`,
+            price: variant.price,
+            image: product.image,
+            productId: product.id,
+            variantName: variant.name,
+          },
+          quantity: quantity,
+        });
+      }
+    });
+    
+    if (!allValid) return;
 
-    addToCart(itemToAdd, quantity);
-    alert(`${quantity}x ${itemToAdd.name} telah ditambahkan ke keranjang!`);
+    itemsToAdd.forEach(entry => addToCart(entry.item, entry.quantity));
+
+    setToastMessage(`${totalItems} item berhasil ditambahkan ke keranjang!`);
+    setShowToast(true);
+    setQuantities(initializeQuantities(product.variants));
   };
 
-  // --- RENDER LOGIC ---
-  // This check now correctly handles cases where the ID is invalid.
-  if (!product) { // Simplified check, as selectedVariant is set in useEffect
-    return (
-      <div className="product-not-found">
-        <h2>Produk tidak ditemukan!</h2>
-        <p>Maaf, kami tidak dapat menemukan produk yang Anda cari.</p>
-        <Link to="/">Kembali ke Beranda</Link>
-      </div>
-    );
-  }
-
-  // This check handles the case where a product exists but variants are loading or absent
-  if (!selectedVariant) {
-      return (
-          <div className="product-not-found">
-              <h2>Memuat detail produk...</h2>
-          </div>
-      );
+  if (!product) {
+    return <div className="product-not-found"><h2>Produk tidak ditemukan!</h2></div>;
   }
 
   return (
     <div className="product-detail-page">
+      {showToast && <NotificationToast message={toastMessage} onClose={() => setShowToast(false)} />}
+
       <div className="product-detail-container">
         <div className="product-detail-image-container">
           <img src={product.image} alt={product.name} className="product-detail-image" />
         </div>
+
         <div className="product-detail-info">
           <h1 className="product-detail-name">{product.name}</h1>
-          
-          <p className="product-detail-price">
-            Rp{selectedVariant.price.toLocaleString('id-ID')}
-          </p>
-          
-          <p className="product-detail-category">Kategori: {product.category}</p>
-
-          <div className="variant-selection">
-            <p className="variant-label">Pilih Varian:</p>
-            <div className="variant-buttons">
-              {product.variants.map(variant => (
-                <button 
-                  key={variant.name}
-                  className={`variant-btn ${selectedVariant.name === variant.name ? 'active' : ''}`}
-                  onClick={() => handleVariantChange(variant)}
-                >
-                  {variant.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="quantity-control">
-            <p className="quantity-label">Jumlah:</p>
-            <div className="quantity-input-group">
-              <button onClick={handleDecreaseQuantity} disabled={quantity <= 1}>-</button>
-              <span>{quantity}</span>
-              <button onClick={handleIncreaseQuantity}>+</button>
-            </div>
-          </div>
-
           <p className="product-detail-description">{product.description}</p>
-          
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>
-            Tambah ke Keranjang
+
+          <div className="variant-selection-cards">
+            <p className="variant-label">Pilih Varian & Jumlah:</p>
+            <div className="variant-card-container">
+              {product.variants.map(variant => {
+                const currentQty = quantities[variant.name] || 0;
+                const isCardActive = currentQty > 0;
+                const minQty = variant.minQuantity || 1;
+
+                return (
+                  // NEW: Wrapper for card + tip
+                  <div key={variant.name} className="variant-item-wrapper">
+                    <div className={`variant-card ${isCardActive ? 'active' : ''}`}>
+                      <img src={product.image} alt={variant.tierName} className="variant-card-image" />
+                      <div className="variant-card-details">
+                        <span className="variant-card-name">{variant.tierName}</span>
+                        <span className="variant-card-price">Rp{variant.price.toLocaleString('id-ID')} / pcs</span>
+                      </div>
+                      <div className="card-quantity-controls">
+                        <button onClick={() => handleQuantityChange(variant.name, -1)} disabled={currentQty === 0}>−</button>
+                        <span>{currentQty}</span>
+                        <button onClick={() => handleQuantityChange(variant.name, 1)}>+</button>
+                      </div>
+                    </div>
+                    {/* NEW: Savings Tip Render */}
+                    {savingsTip && savingsTip.target === variant.name && (
+                      <div className="savings-tip">
+                        {savingsTip.message}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {total > 0 && (
+            <div className="total-order-section">
+              <h3>Total Pesanan</h3>
+              <div className="total-order-row">
+                <span>Total Item</span>
+                <span>{totalItems}</span>
+              </div>
+              <div className="total-order-row grand-total">
+                <span>Total Harga</span>
+                <span>Rp{total.toLocaleString('id-ID')}</span>
+              </div>
+            </div>
+          )}
+
+          <button 
+            className="add-to-cart-btn" 
+            onClick={handleAddToCart} 
+            disabled={totalItems === 0}
+          >
+            {totalItems > 0 ? `Tambah ${totalItems} Item ke Keranjang` : 'Pilih Item'}
           </button>
           
           <Link to="/" className="back-link">‹ Kembali ke semua produk</Link>

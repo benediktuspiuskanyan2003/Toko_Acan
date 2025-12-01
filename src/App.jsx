@@ -58,44 +58,103 @@ import OrderDetail from './pages/admin/OrderDetail';
 import TestCheckout from './pages/TestCheckout';
 
 
+// function App() {
+//   const location = useLocation();
+
+//   const noNavbarPaths = ['/login', '/register','/admin','./admin/products'];
+
+
+//   const shouldShowNavbar = !noNavbarPaths.includes(location.pathname);
+
+//   return (
+//     <CartProvider>
+//       <div className="App">
+
+//         {shouldShowNavbar && <Navbar />}
+
+//         <main className="main-content">
+//           <Routes>
+//             <Route path="/" element={<Beranda />} />
+//             <Route path="/product/:id" element={<ProductDetail />} />
+//             <Route path="/keranjang" element={<Keranjang />} />
+//             <Route path="/test-checkout" element={<TestCheckout />} />
+//             <Route path="/transaksi" element={<Transaksi />} />
+//             <Route path="/akun" element={<Akun />} />
+//             <Route path="/login" element={<Login />} />
+//             <Route path="/register" element={<Register />} />
+//             <Route path="/admin" element={<AdminLayout />}>
+//               {/* Saat buka /admin, otomatis buka Dashboard */}
+//               <Route index element={<Dashboard />} />
+//               <Route path="products" element={<ProductList />} />
+//               <Route path="products/add" element={<ProductAdd />} />
+//               <Route path="products/edit/:id" element={<ProductEdit />} />
+//               <Route path="orders" element={<OrderList />} />
+//               <Route path="orders/:id" element={<OrderDetail />} />
+//             </Route>
+//           </Routes>
+//         </main>
+//       </div>
+//     </CartProvider>
+//   );
+// }
+
+// export default App;
+
+// src/App.jsx (Setelah Diperbaiki)
+//=========================================================================================================================
+// import React from 'react';
+// import { Routes, Route } from 'react-router-dom'; // Hapus useLocation
+// import { CartProvider } from './context/CartContext.jsx';
+// import Beranda from './pages/Beranda.jsx';
+// import ProductDetail from './pages/ProductDetail.jsx';
+// import Navbar from './components/Navbar.jsx'; // JANGAN HAPUS! Kita akan menggunakannya di MainLayout (konsep)
+// import Keranjang from './pages/Keranjang.jsx';
+// import Transaksi from './pages/Transaksi.jsx';
+// import Akun from './pages/Akun.jsx';
+// import './App.css';
+// // ... (Import halaman lain) ...
+
+// --- DEFINISIKAN LAYOUT UTAMA BARU (MainLayout) DI SINI ---
+// Kita bungkus rute publik dengan MainLayout agar Navbar tampil di sana
+
+import MainLayout from './layouts/MainLayout.jsx';
+
 function App() {
-  const location = useLocation();
+    // HAPUS SEMUA LOGIKA useLocation, noNavbarPaths, dan shouldShowNavbar
+    
+    return (
+        <CartProvider>
+            <div className="App">
+                <Routes>
+                    
+                    {/* 1. JALUR PUBLIK/USER (MENGGUNAKAN NAVBAR) */}
+                    <Route path="/" element={<MainLayout />}>
+                        <Route index element={<Beranda />} />
+                        <Route path="product/:id" element={<ProductDetail />} />
+                        <Route path="keranjang" element={<Keranjang />} />
+                        <Route path="test-checkout" element={<TestCheckout />} />
+                        <Route path="transaksi" element={<Transaksi />} />
+                        <Route path="akun" element={<Akun />} />
+                    </Route>
 
-  const noNavbarPaths = ['/login', '/register'];
+                    {/* 2. JALUR NON-NAVBAR (LOGIN/REGISTER) */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
-
-  const shouldShowNavbar = !noNavbarPaths.includes(location.pathname);
-
-  return (
-    <CartProvider>
-      <div className="App">
-
-        {shouldShowNavbar && <Navbar />}
-
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Beranda />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/keranjang" element={<Keranjang />} />
-            <Route path="/test-checkout" element={<TestCheckout />} />
-            <Route path="/transaksi" element={<Transaksi />} />
-            <Route path="/akun" element={<Akun />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              {/* Saat buka /admin, otomatis buka Dashboard */}
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<ProductList />} />
-              <Route path="products/add" element={<ProductAdd />} />
-              <Route path="products/edit/:id" element={<ProductEdit />} />
-              <Route path="orders" element={<OrderList />} />
-              <Route path="orders/:id" element={<OrderDetail />} />
-            </Route>
-          </Routes>
-        </main>
-      </div>
-    </CartProvider>
-  );
+                    {/* 3. JALUR ADMIN (MENGGUNAKAN SIDEBAR TANPA NAVBAR GLOBAL) */}
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="products" element={<ProductList />} />
+                        <Route path="products/add" element={<ProductAdd />} />
+                        <Route path="products/edit/:id" element={<ProductEdit />} />
+                        <Route path="orders" element={<OrderList />} />
+                        <Route path="orders/:id" element={<OrderDetail />} />
+                    </Route>
+                    
+                </Routes>
+            </div>
+        </CartProvider>
+    );
 }
 
 export default App;

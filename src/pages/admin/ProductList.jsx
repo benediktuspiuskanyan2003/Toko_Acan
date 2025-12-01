@@ -48,11 +48,12 @@ const ProductList = () => {
     return (
         <div>
             {/* HEADER: Judul & Tombol Tambah */}
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Daftar Produk</h2>
+            <div className="flex justify-between items-center mb-4"> {/* mb-6 -> mb-4 (dibuat lebih ringkas) */}
+                <h2 className="text-xl font-bold text-gray-800">Daftar Produk</h2> {/* text-2xl -> text-xl */}
                 <Link
                     to="/admin/products/add"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
+                    /* px-4 py-2 -> px-3 py-1.5 | text-sm -> text-xs | gap-2 -> gap-1 */
                 >
                     + Tambah Produk
                 </Link>
@@ -61,58 +62,58 @@ const ProductList = () => {
             {/* TABEL */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
-                    <div className="p-8 text-center text-gray-500">Memuat data produk...</div>
+                    <div className="p-6 text-center text-sm text-gray-500">Memuat data produk...</div>
                 ) : (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Info Produk</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Varian & Harga</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Info Produk</th> {/* px-6 py-3 -> px-4 py-2 */}
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th> {/* px-6 py-3 -> px-4 py-2 */}
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Varian & Harga</th> {/* px-6 py-3 -> px-4 py-2 */}
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> {/* px-6 py-3 -> px-4 py-2 */}
+                                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th> {/* px-6 py-3 -> px-4 py-2 */}
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {products.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                    <td colSpan="5" className="px-4 py-3 text-center text-sm text-gray-500">
                                         Belum ada produk. Silakan tambah produk baru.
-                                    </td>
+                                    </td> {/* px-6 py-4 -> px-4 py-3 | text-base -> text-sm */}
                                 </tr>
                             ) : (
                                 products.map((product) => (
                                     <tr key={product.id} className="hover:bg-gray-50">
 
                                         {/* Kolom 1: Gambar & Nama */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-4 py-3 whitespace-nowrap"> {/* px-6 py-4 -> px-4 py-3 */}
                                             <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10">
+                                                <div className="flex-shrink-0 h-8 w-8"> {/* h-10 w-10 -> h-8 w-8 (Ikon/Gambar lebih kecil) */}
                                                     {product.url_gambar ? (
-                                                        <img className="h-10 w-10 rounded object-cover" src={product.url_gambar} alt="" />
+                                                        <img className="h-8 w-8 rounded object-cover" src={product.url_gambar} alt="" />
                                                     ) : (
-                                                        <div className="h-10 w-10 rounded bg-gray-200 flex items-center justify-center text-gray-400">IMG</div>
+                                                        <div className="h-8 w-8 rounded bg-gray-200 flex items-center justify-center text-gray-400 text-xs">IMG</div> 
                                                     )}
                                                 </div>
-                                                <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900">{product.nama_produk}</div>
+                                                <div className="ml-3"> {/* ml-4 -> ml-3 */}
+                                                    <div className="text-sm font-medium text-gray-900">{product.nama_produk}</div> {/* text-sm -> tetap sm (supaya nama produk tetap terbaca) */}
                                                 </div>
                                             </div>
                                         </td>
 
                                         {/* Kolom 2: Kategori */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-4 py-3 whitespace-nowrap"> {/* px-6 py-4 -> px-4 py-3 */}
                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                                 {product.kategori?.nama_kategori || '-'}
                                             </span>
                                         </td>
 
                                         {/* Kolom 3: Varian (Looping Anak) */}
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-500 space-y-1">
+                                        <td className="px-4 py-3"> {/* px-6 py-4 -> px-4 py-3 */}
+                                            <div className="text-xs text-gray-500 space-y-1"> {/* text-sm -> text-xs */}
                                                 {product.daftar_varian.map((v) => (
-                                                    <div key={v.id} className="flex justify-between w-40">
-                                                        <span>{v.nama_satuan}:</span>
+                                                    <div key={v.id} className="flex justify-between w-32"> {/* w-40 -> w-32 (dibuat lebih sempit) */}
+                                                        <span className='truncate'>{v.nama_satuan}:</span> {/* Tambah truncate untuk nama satuan panjang */}
                                                         <span className="font-medium text-gray-900">{formatRupiah(v.harga)}</span>
                                                     </div>
                                                 ))}
@@ -120,19 +121,19 @@ const ProductList = () => {
                                         </td>
 
                                         {/* Kolom 4: Status */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-4 py-3 whitespace-nowrap"> {/* px-6 py-4 -> px-4 py-3 */}
                                             {product.aktif ? (
-                                                <span className="text-green-600 text-sm font-medium">Aktif</span>
+                                                <span className="text-green-600 text-xs font-medium">Aktif</span>
                                             ) : (
-                                                <span className="text-red-600 text-sm font-medium">Non-Aktif</span>
+                                                <span className="text-red-600 text-xs font-medium">Non-Aktif</span> 
                                             )}
                                         </td>
 
                                         {/* Kolom 5: Aksi */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td className="px-4 py-3 whitespace-nowrap text-right text-xs font-medium"> {/* px-6 py-4 -> px-4 py-3 | text-sm -> text-xs */}
                                             <Link
                                                 to={`/admin/products/edit/${product.id}`}
-                                                className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                className="text-indigo-600 hover:text-indigo-900 mr-3" 
                                             >
                                                 Edit
                                             </Link>

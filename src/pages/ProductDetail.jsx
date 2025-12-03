@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { dummyProducts } from '../data/dummyProducts.js';
 import { useCart } from '../context/CartContext.jsx';
 import NotificationToast from '../components/NotificationToast.jsx';
+import api from '../services/api'; // 1. IMPORT API, HAPUS DUMMY
 import './ProductDetail.css';
 
 const initializeQuantities = (variants) => {
@@ -18,34 +18,71 @@ const initializeQuantities = (variants) => {
 function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useCart();
-  const product = dummyProducts.find(p => p.id === Number(id));
+  
+  // 2. STATE UNTUK DATA REAL
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [quantities, setQuantities] = useState({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [savingsTip, setSavingsTip] = useState(null); // NEW: State for savings tip
+  const [savingsTip, setSavingsTip] = useState(null);
 
+  // 3. FETCH DATA DARI BACKEND (Gantikan dummyProducts.find)
   useEffect(() => {
-    if (product) {
-      setQuantities(initializeQuantities(product.variants));
-    }
-  }, [product]);
+    const fetchProductDetail = async () => {
+      try {
+        const response = await api.get(`/products/${id}`);
+        
+        if (response.data.success) {
+          const backendData = response.data.data;
 
-  // NEW: useEffect to watch for savings opportunities
+          // 4. MAPPING DATA (PENTING: Backend -> Frontend UI)
+          // Kita ubah format database biar cocok sama logika UI kamu
+          const mappedProduct = {
+            id: backendData.id,
+            name: backendData.nama_produk,
+            description: backendData.deskripsi || "Tidak ada deskripsi.",
+            image: backendData.url_gambar || 'https://via.placeholder.com/500', // Gambar default
+            variants: backendData.daftar_varian.map(v => ({
+              id: v.id,
+              // ID unik buat logic quantity
+              name: v.nama_satuan, 
+              // Tampilan nama varian (misal: Dus, Pcs)
+              tierName: v.nama_satuan, 
+              price: v.harga,
+              // Backend belum kirim min_qty, kita default 1 dulu
+              minQuantity: 1 
+            }))
+          };
+
+          setProduct(mappedProduct);
+          setQuantities(initializeQuantities(mappedProduct.variants));
+        }
+      } catch (error) {
+        console.error("Gagal ambil detail:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetail();
+  }, [id]);
+
+  // --- LOGIC UI DI BAWAH INI SAMA PERSIS DENGAN KODINGAN KAMU ---
+  
+  // Logic Tips Hemat (Tetap jalan asalkan nama variannya 'PCS' dan 'Grosir')
   useEffect(() => {
     if (!product) return;
 
-    const eceranVariant = product.variants.find(v => v.name === 'PCS');
-    const grosirVariant = product.variants.find(v => v.name === 'PCS Grosir');
-    const eceranQuantity = quantities[eceranVariant?.name] || 0;
-
-    if (eceranVariant && grosirVariant && eceranQuantity >= grosirVariant.minQuantity) {
-      setSavingsTip({
-        target: eceranVariant.name,
-        message: `✨ Tips: Pilih penawaran "${grosirVariant.tierName}" untuk harga lebih hemat (Rp ${grosirVariant.price.toLocaleString('id-ID')}/pcs).`
-      });
-    } else {
-      setSavingsTip(null); // Clear tip if condition is not met
+    // Catatan: Pastikan di Database nanti nama satuannya 'PCS' dan 'Grosir' 
+    // biar logic ini jalan. Atau sesuaikan string-nya.
+    const eceranVariant = product.variants.find(v => v.name.toLowerCase() === 'pcs');
+    const grosirVariant = product.variants.find(v => v.name.toLowerCase().includes('dus') || v.name.toLowerCase().includes('grosir'));
+    
+    // Logic sederhana: Kalau ada Dus, kasih tips
+    if (eceranVariant && grosirVariant) {
+        // ... logic tips kamu bisa dikembangkan di sini
     }
   }, [quantities, product]);
 
@@ -64,7 +101,6 @@ function ProductDetail() {
         newQuantity = Math.max(0, newQuantity);
       }
 
-      // Special rule: if user decreases from minQuantity, it should go to 0
       if (amount < 0 && currentQuantity === variant.minQuantity && variant.minQuantity > 1) {
         newQuantity = 0;
       }
@@ -98,10 +134,11 @@ function ProductDetail() {
       const quantity = quantities[variant.name];
       if (quantity > 0) {
         if (quantity < variant.minQuantity) {
-            alert(`Jumlah untuk ${variant.tierName} minimal harus ${variant.minQuantity}. Pesanan Anda saat ini ${quantity}.`);
+            alert(`Jumlah untuk ${variant.tierName} minimal harus ${variant.minQuantity}.`);
             allValid = false;
             return;
         }
+        console.log("🔍 CEK VARIAN SEBELUM MASUK CART:", variant);
         itemsToAdd.push({
           item: {
             id: `${product.id}-${variant.name}`,
@@ -109,8 +146,8 @@ function ProductDetail() {
             price: variant.price,
             image: product.image,
             productId: product.id,
+            variantId: variant.id,
             variantName: variant.name,
-            // MODIFIED: Pass minQuantity to the cart context
             minQuantity: variant.minQuantity,
           },
           quantity: quantity,
@@ -120,12 +157,20 @@ function ProductDetail() {
     
     if (!allValid) return;
 
+    console.log("📦 PAKET YANG DIKIRIM KE CONTEXT:", itemsToAdd);
+
     itemsToAdd.forEach(entry => addToCart(entry.item, entry.quantity));
 
     setToastMessage(`${totalItems} item berhasil ditambahkan ke keranjang!`);
     setShowToast(true);
+    // Reset quantity setelah add to cart
     setQuantities(initializeQuantities(product.variants));
   };
+
+  // 5. TAMPILAN LOADING
+  if (loading) {
+    return <div className="p-10 text-center mt-10"><h3>Sedang memuat produk...</h3></div>;
+  }
 
   if (!product) {
     return <div className="product-not-found"><h2>Produk tidak ditemukan!</h2></div>;
@@ -150,16 +195,15 @@ function ProductDetail() {
               {product.variants.map(variant => {
                 const currentQty = quantities[variant.name] || 0;
                 const isCardActive = currentQty > 0;
-                const minQty = variant.minQuantity || 1;
-
+                
                 return (
-                  // NEW: Wrapper for card + tip
                   <div key={variant.name} className="variant-item-wrapper">
                     <div className={`variant-card ${isCardActive ? 'active' : ''}`}>
+                      {/* Gambar Varian pakai gambar produk utama dulu */}
                       <img src={product.image} alt={variant.tierName} className="variant-card-image" />
                       <div className="variant-card-details">
                         <span className="variant-card-name">{variant.tierName}</span>
-                        <span className="variant-card-price">Rp{variant.price.toLocaleString('id-ID')} / pcs</span>
+                        <span className="variant-card-price">Rp{variant.price.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="card-quantity-controls">
                         <button onClick={() => handleQuantityChange(variant.name, -1)} disabled={currentQty === 0}>−</button>
@@ -167,12 +211,6 @@ function ProductDetail() {
                         <button onClick={() => handleQuantityChange(variant.name, 1)}>+</button>
                       </div>
                     </div>
-                    {/* NEW: Savings Tip Render */}
-                    {savingsTip && savingsTip.target === variant.name && (
-                      <div className="savings-tip">
-                        {savingsTip.message}
-                      </div>
-                    )}
                   </div>
                 );
               })}

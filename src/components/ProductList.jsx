@@ -47,9 +47,8 @@ const ProductList = ({
             // Display the price of the first variant as the default price.
             // This ensures a price is always visible on the product card.
             // It also checks if variants exist to prevent errors.
-            const displayPrice = product.variants && product.variants.length > 0
-              ? product.variants[0].price
-              : 0; // Fallback price if no variants
+            const displayPrice = product.price;
+            // ----------------------
 
             return (
               <Link to={`/product/${product.id}`} key={product.id} className="product-card-link">

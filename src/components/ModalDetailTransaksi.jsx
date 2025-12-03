@@ -3,30 +3,26 @@ import { X } from 'lucide-react';
 import { dummyProducts } from '../data/dummyProducts';
 
 /**
- * Komponen Modal Detail Transaksi (Tampilan Full-Screen)
- * @param {object} order - Data pesanan yang dipilih.
- * @param {function} onClose - Fungsi untuk menutup modal.
- * @param {function} formatRupiah - Fungsi helper format Rupiah.
+ 
+ * @param {object} order 
+ * @param {function} onClose
+ * @param {function} formatRupiah 
  */
 const ModalDetailTransaksi = ({ order, onClose, formatRupiah }) => {
-    // Menghitung Total Harga Item (Item Price * Qty) untuk ditampilkan
+    
     const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const tax = order.total - subtotal; // Asumsi sisanya adalah pajak/biaya layanan
+    const tax = order.total - subtotal; 
 
-    // LOGIKA BARU: Tentukan apakah pesanan bisa dibatalkan
+    
     const isCancellable = order.status === 'Proses';
 
     const handleCancelOrder = () => {
-        // DI SINI ADALAH LOGIKA NYATA UNTUK MENGUPDATE STATUS DI BACKEND
-        
-        // PENTING: Mengganti window.confirm dan alert dengan komponen modal kustom 
-        // disarankan karena pembatasan lingkungan iframe. Namun, untuk menjaga 
-        // fungsi cepat, saya menggunakan console.log dan onClose.
+
         if (window.confirm(`Anda yakin ingin membatalkan pesanan #${order.id}?`)) {
           
             console.log(`[PEMBATALAN DIPROSES] Pesanan #${order.id} dibatalkan.`);
             alert(`Pesanan #${order.id} telah dibatalkan.`);
-            onClose(); // Tutup modal setelah pembatalan
+            onClose(); 
         }
     };
 

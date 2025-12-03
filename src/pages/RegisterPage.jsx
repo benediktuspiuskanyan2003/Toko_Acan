@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Import Navigate
-import api from '../services/api'; // 2. Import API Jembatan
-// import './Akun.css'; 
+import { useNavigate } from 'react-router-dom'; 
+import api from '../services/api'; 
 import './LoginPage.css'; 
 
-function Register() {
-  const navigate = useNavigate(); // 3. Hook navigasi
+// 1. IMPORT ICON
+import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
-  // State untuk menyimpan nilai input
+function Register() {
+  const navigate = useNavigate(); 
+  
+  // State ini akan mengontrol visibilitas KEDUA password sekaligus
+  const [showPassword, setShowPassword] = useState(false); 
+
   const [namaLengkap, setNamaLengkap] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); 
   
-  // State tambahan
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // State Loading
+  const [loading, setLoading] = useState(false); 
 
-  // Fungsi helper untuk validasi dasar Nomor HP
   const isValidPhoneNumber = (value) => {
     return /^\+?\d{8,}$/.test(value);
   };
 
-  // Fungsi yang dipanggil saat form disubmit
-  const handleSubmit = async (e) => { // 4. Jadikan Async
+  const handleSubmit = async (e) => { 
     e.preventDefault(); 
     setError('');
 
-    // --- VALIDASI CLIENT (Punya Temanmu) ---
     if (!namaLengkap || !phoneNumber || !password || !confirmPassword) {
       setError('Semua kolom harus diisi.');
       return;
@@ -38,7 +38,7 @@ function Register() {
         return;
     }
     
-    if (password.length < 6) { // Sesuaikan dengan backend (kalau backend 6, di sini 6)
+    if (password.length < 6) { 
         setError('Kata sandi minimal harus 6 karakter.');
         return;
     }
@@ -48,13 +48,9 @@ function Register() {
         return;
     }
 
-    // --- LOGIC BACKEND MULAI ---
-    setLoading(true); // Mulai loading
+    setLoading(true); 
 
     try {
-      // 5. Tembak API Register
-      // Perhatikan mapping nama field: 
-      // Kiri (Backend) : Kanan (State Frontend)
       const response = await api.post('/auth/register', {
         nama_lengkap: namaLengkap,
         no_wa: phoneNumber,
@@ -63,16 +59,27 @@ function Register() {
 
       if (response.data.success) {
         alert(`Pendaftaran ${namaLengkap} berhasil! Silakan masuk.`);
-        navigate('/login'); // 6. Redirect pakai React Router
+        navigate('/login'); 
       }
 
     } catch (err) {
       console.error(err);
-      // Tampilkan error dari backend (misal: No WA sudah terdaftar)
       setError(err.response?.data?.message || 'Gagal mendaftar. Coba lagi.');
     } finally {
-      setLoading(false); // Selesai loading
+      setLoading(false); 
     }
+  };
+
+  // Style untuk icon mata (biar rapi dan bisa dipakai ulang)
+  const iconStyle = {
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer',
+    color: '#666',
+    display: 'flex',
+    alignItems: 'center'
   };
 
   return (
@@ -83,12 +90,10 @@ function Register() {
         
         <p>Isi data diri Anda untuk mendaftar.</p>
 
-        {/* Tampilkan Error */}
         {error && <div className='error-message' style={{color: 'red', textAlign:'center', marginBottom:'10px'}}>{error}</div>}
 
         <form onSubmit={handleSubmit}>
           
-          {/* Input Nama Lengkap */}
           <div className='form-group'>
             <label htmlFor='nama'>Nama Lengkap</label>
             <input
@@ -99,11 +104,10 @@ function Register() {
               placeholder='Masukkan Nama Lengkap Anda'
               required
               className='form-input'
-              disabled={loading} // Disable saat loading
+              disabled={loading} 
             />
           </div>
 
-          {/* Input Nomor HP */}
           <div className='form-group'>
             <label htmlFor='phoneNumber'>Nomor HP</label>
             <input
@@ -118,34 +122,52 @@ function Register() {
             />
           </div>
 
-          {/* Input Kata Sandi */}
+          {/* --- INPUT KATA SANDI UTAMA --- */}
           <div className='form-group'>
             <label htmlFor='password'>Buat Kata Sandi</label>
-            <input
-              type='password'
-              id='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='Minimal 6 karakter'
-              required
-              className='form-input'
-              disabled={loading}
-            />
+            <div style={{ position: 'relative' }}>
+                <input
+                // 2. Ubah Type sesuai state showPassword
+                type={showPassword ? 'text' : 'password'}
+                id='password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder='Minimal 6 karakter'
+                required
+                className='form-input'
+                disabled={loading}
+                style={{ paddingRight: '40px' }} // Kasih jarak biar gak nabrak icon
+                />
+                
+                {/* 3. Tombol Icon Mata */}
+                <span style={iconStyle} onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <FaEye size={20}/> : <FaEyeSlash size={20}/> }
+                </span>
+            </div>
           </div>
           
-          {/* Input KONFIRMASI KATA SANDI */}
+          {/* --- INPUT KONFIRMASI KATA SANDI --- */}
           <div className='form-group'>
             <label htmlFor='confirmPassword'>Konfirmasi Kata Sandi</label>
-            <input
-              type='password'
-              id='confirmPassword'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder='Ulangi kata sandi'
-              required
-              className='form-input'
-              disabled={loading}
-            />
+            <div style={{ position: 'relative' }}>
+                <input
+                // 4. Ini juga ikut berubah Type-nya
+                type={showPassword ? 'text' : 'password'}
+                id='confirmPassword'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder='Ulangi kata sandi'
+                required
+                className='form-input'
+                disabled={loading}
+                style={{ paddingRight: '40px' }}
+                />
+
+                {/* Tombol Icon Mata (Opsional: Bisa dihapus kalau cukup 1 di atas) */}
+                <span style={iconStyle} onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <FaEye size={20}/> : <FaEyeSlash size={20}/> }
+                </span>
+            </div>
           </div>
 
           <button type='submit' className='btn-login' disabled={loading}>

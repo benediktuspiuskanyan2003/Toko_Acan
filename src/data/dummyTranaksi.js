@@ -43,3 +43,49 @@ export const ordersData = [
         ], // Total: 1 * 75000 = 75000 (Sudah sesuai)
     },
 ];
+
+
+import api from '../services/api';
+
+export const fetchMyOrders = async () => {
+  try {
+    // 1. Panggil API
+    const response = await api.get('/orders/history');
+    
+    // Pastikan kita mengambil array data yang benar
+    const rawData = response.data.data || [];
+
+    // 2. Lakukan Mapping / Pembersihan Data di sini
+    // Mengubah format Backend (Prisma Nested) -> Format Frontend (UI)
+    const cleanData = rawData.map(order => ({
+      // Level Order
+      id: order.id,
+      date: order.dibuat_pada,      // Mapping kolom DB -> UI
+      status: order.status_pesanan, // Mapping kolom DB -> UI
+      total: order.total_biaya,     // Mapping kolom DB -> UI
+      
+      // Level Items (Looping ke dalam array daftar_item)
+      items: order.daftar_item.map(item => ({
+        // Ambil nama dari kedalaman: item -> varian -> produk -> nama
+        name: item.varian?.produk?.nama_produk || 'Produk tidak dikenal',
+        
+        // Ambil gambar (jika ada)
+        image: item.varian?.produk?.url_gambar || null,
+        
+        // Detail lain
+        variant: item.varian?.nama_varian || '-',
+        qty: item.jumlah,
+        price: item.harga_satuan
+      }))
+    }));
+
+    // 3. Kembalikan data yang sudah bersih
+    return cleanData;
+
+  } catch (error) {
+    // Lempar error agar bisa ditangkap oleh komponen UI
+    console.error("Error in orderService:", error);
+    throw error;
+  }
+};
+

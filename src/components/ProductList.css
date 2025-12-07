@@ -108,10 +108,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 220px));
   justify-content: center;
-  gap: 25px;
+  gap: 15px;
   max-width: 1200px;
   margin: 0 auto;
 }
+
 
 .no-products-found {
     grid-column: 1 / -1; /* Span across all columns */
@@ -130,7 +131,7 @@
 /* Product Card Styling */
 .product-card {
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 3px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -138,6 +139,7 @@
   flex-direction: column;
   text-align: left;
   height: 100%;
+  border: #666 solid 1px;
 }
 
 .product-card:hover {
@@ -175,6 +177,7 @@
   color: #333;
   margin: 0 0 10px 0;
   flex-grow: 1;
+  border-top: #e2e2e2 1px solid;
 }
 
 .product-price {
@@ -200,28 +203,41 @@
     order: 2; /* Show filters below */
     justify-content: center; /* Center the buttons */
   }
+
 }
 
 @media screen and (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 15px;
-  }
+.product-grid {
+        /* Disesuaikan: Min width dikurangi (misal 100px) untuk memungkinkan lebih banyak card */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+        gap: 5px; /* Gap dikurangi lagi untuk mobile yang sempit */
+        padding: 0 5px; /* Tambahkan sedikit padding horizontal jika diperlukan */
+        
+        
+    }
 
-  .product-image-container {
-    height: 130px;
-  }
+    .product-image-container {
+        height: 110px; /* Tinggi gambar dikurangi lagi */
+        padding: 5px; /* Padding di sekitar gambar dikurangi */
+    }
 
-  .product-name {
-    font-size: 0.85rem;
-  }
+    .product-info {
+        padding: 10px; /* Padding di sekitar info (nama/harga) dikurangi */
+    }
 
-  .product-price {
-    font-size: 0.95rem;
-  }
+    .product-name {
+        font-size: 0.8rem; /* Font size nama produk sedikit dikurangi */
+        margin: 0 0 5px 0;
+    }
 
-  .category-btn {
-    padding: 8px 15px;
-    font-size: 0.85rem;
-  }
+    .product-price {
+        font-size: 0.9rem; /* Font size harga dikurangi */
+    }
+
+    .category-btn {
+        padding: 6px 10px; /* Padding tombol filter dikurangi */
+        font-size: 0.75rem;
+    }
 }
+
+

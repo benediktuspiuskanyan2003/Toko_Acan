@@ -96,7 +96,7 @@ const ProductList = () => {
                                                     )}
                                                 </div>
                                                 <div className="ml-3"> {/* ml-4 -> ml-3 */}
-                                                    <div className="text-sm font-medium text-gray-900">{product.nama_produk}</div> {/* text-sm -> tetap sm (supaya nama produk tetap terbaca) */}
+                                                    <div className="text-sm font-small text-gray-900 max-w-[200px] truncate">{product.nama_produk}</div> {/* text-sm -> tetap sm (supaya nama produk tetap terbaca) */}
                                                 </div>
                                             </div>
                                         </td>

@@ -21,16 +21,34 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (item, quantity = 1) => {
+  // --- MODIFIED addToCart FUNCTION ---
+  const addToCart = (product, variant, quantity = 1) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i.id === item.id);
+      // Create a unique ID for the cart item based on product and variant
+      const uniqueItemId = `${product.id}-${variant.name.replace(/\s+/g, '-')}`;
+      const existingItem = prevItems.find(i => i.id === uniqueItemId);
+
       if (existingItem) {
+        // If item already exists, just update its quantity
         return prevItems.map(i =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
+          i.id === uniqueItemId ? { ...i, quantity: i.quantity + quantity } : i
         );
       } else {
-        // **MODIFIED**: Add 'selected: true' property by default to new items
-        return [...prevItems, { ...item, quantity, selected: true }];
+        // If it's a new item, add it to the cart with a flattened structure
+        const newItem = {
+          id: uniqueItemId,
+          productId: product.id,
+          variantId: variant.name, // Using name as a simple ID for now
+          name: product.name,
+          variantName: variant.name,
+          price: variant.price,
+          image: product.image,
+          min_quantity: variant.min_quantity,
+          isi: variant.isi,
+          quantity: quantity,
+          selected: true // Default to selected
+        };
+        return [...prevItems, newItem];
       }
     });
   };
@@ -51,7 +69,6 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // **NEW**: Toggles the 'selected' state of a single item
   const toggleItemSelection = (itemId) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
@@ -60,14 +77,12 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // **NEW**: Selects or deselects all items in the cart
   const toggleAllItems = (select) => {
     setCartItems(prevItems =>
       prevItems.map(item => ({ ...item, selected: select }))
     );
   };
 
-  // **NEW**: Removes only the selected items from the cart (used after checkout)
   const removeSelectedItems = () => {
     setCartItems(prevItems => prevItems.filter(item => !item.selected));
   };
@@ -76,20 +91,15 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   };
   
-  // **REMOVED**: Total price and total items are no longer calculated globally.
-  // They will be calculated in Keranjang.jsx based on selected items.
-
   const value = {
     cartItems,
     addToCart,
     removeFromCart,
     updateQuantity,
-    clearCart, // Kept for potential 'Clear All' functionality
-    // **NEWLY EXPORTED FUNCTIONS**
+    clearCart,
     toggleItemSelection,
     toggleAllItems,
     removeSelectedItems,
-    // We no longer export totalItems and totalPrice from here
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
